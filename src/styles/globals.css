@@ -1,6 +1,155 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  /* Guards of Atlantis II Color Palette */
+  --color-ice-300: #8dd4ea;
+  --color-ice-400: #6bbcd4;
+  --color-ice-500: #4a9cb5;
+  --color-ice-600: #3a8ca5;
+
+  --color-amber-300: #f5b86a;
+  --color-amber-400: #e8a04a;
+  --color-amber-500: #d4853a;
+  --color-amber-600: #b86d2a;
+
+  --color-game-slate-800: #2a3040;
+  --color-game-slate-900: #1a2030;
+  --color-game-slate-950: #0f1520;
+
+  --color-parchment-100: #f5ede0;
+  --color-parchment-200: #e8d9b8;
+  --color-parchment-300: #d4c49a;
+
+  --color-crimson-500: #a83a3a;
+  --color-crimson-600: #8b2a2a;
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* Guards of Atlantis II Dark Theme (default) */
+:root {
+  --radius: 0.25rem;
+  /* Dark slate background from game art */
+  --background: #0f1520;
+  --foreground: #f5ede0;
+  /* Card styling */
+  --card: #1a2030;
+  --card-foreground: #f5ede0;
+  --popover: #1a2030;
+  --popover-foreground: #f5ede0;
+  /* Primary = Amber (main CTA buttons) */
+  --primary: #d4853a;
+  --primary-foreground: #0f1520;
+  /* Secondary = Ice blue */
+  --secondary: #4a9cb5;
+  --secondary-foreground: #ffffff;
+  /* Muted */
+  --muted: #2a3040;
+  --muted-foreground: #e8d9b8;
+  /* Accent = Ice */
+  --accent: #3a8ca5;
+  --accent-foreground: #ffffff;
+  /* Destructive = Crimson */
+  --destructive: #a83a3a;
+  /* Borders and inputs */
+  --border: rgba(74, 156, 181, 0.3);
+  --input: rgba(74, 156, 181, 0.5);
+  --ring: #6bbcd4;
+  /* Charts */
+  --chart-1: #e8a04a;
+  --chart-2: #6bbcd4;
+  --chart-3: #a83a3a;
+  --chart-4: #e8d9b8;
+  --chart-5: #3a8ca5;
+  /* Sidebar */
+  --sidebar: #1a2030;
+  --sidebar-foreground: #f5ede0;
+  --sidebar-primary: #d4853a;
+  --sidebar-primary-foreground: #0f1520;
+  --sidebar-accent: #2a3040;
+  --sidebar-accent-foreground: #f5ede0;
+  --sidebar-border: rgba(74, 156, 181, 0.3);
+  --sidebar-ring: #6bbcd4;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Card swipe animations - using translateY because card is rotated -90deg */
+@keyframes slide-in-left {
+  from {
+    transform: translateY(-100%) rotate(-8deg);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateY(100%) rotate(8deg);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.15s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.15s ease-out forwards;
 }

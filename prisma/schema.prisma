@@ -7,15 +7,175 @@ generator client {
 }
 
 datasource db {
-    provider = "mysql"
-    url      = env("DATABASE_URL")
+    provider = "postgresql"
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+// ============================================
+// ENUMS
+// ============================================
 
-    @@index([name])
+enum Collection {
+    Arcane
+    Base
+    Defiant
+    Devoted
+    Renowned
+    Wayward
+}
+
+enum CardType {
+    BasicAttack
+    Attack
+    BasicAttackRanged
+    AttackRanged
+    Skill
+    SkillMelee
+    SkillRanged
+    Movement
+    Defense
+    Versatile
+    VersatileMelee
+    VersatileRanged
+    Special
+}
+
+enum Role {
+    Tactician
+    Disabler
+    Durable
+    Pusher
+    Damager
+    Sniper
+    Melee
+    Tokens
+    Farming
+    Support
+    Mobile
+    Zoner
+    Healer
+}
+
+enum Class {
+    Tank
+    Carry
+    Support
+    Controller
+    Pusher
+}
+
+// ============================================
+// MODELS
+// ============================================
+
+model Hero {
+    id              Int      @id @default(autoincrement())
+    name            String   @unique
+    slug            String   @unique
+    collection      Collection
+    class           Class
+    complexity      Int      @db.SmallInt // 1-3 stars
+
+    // Stats (1-8 scale)
+    attack          Int      @db.SmallInt
+    defense         Int      @db.SmallInt
+    initiative      Int      @db.SmallInt
+    movement        Int      @db.SmallInt
+
+    // Image references (relative paths)
+    heroCardImage   String   @db.VarChar(255)
+    cardBackImage   String   @db.VarChar(255)
+    folderPath      String   @db.VarChar(255)
+
+    // Special mechanics
+    hasSpellbook    Boolean  @default(false)
+    deckSize        Int      @default(21) @db.SmallInt
+
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+
+    // Relations
+    roles           HeroRole[]
+    cards           Card[]
+    spellbookCards  SpellbookCard[]
+
+    @@index([collection])
+    @@index([slug])
+    @@index([attack])
+    @@index([defense])
+    @@index([initiative])
+    @@index([movement])
+}
+
+model HeroRole {
+    id       Int   @id @default(autoincrement())
+    heroId   Int
+    role     Role
+    priority Int   @db.SmallInt @default(0) // 1 = primary role
+
+    hero     Hero  @relation(fields: [heroId], references: [id], onDelete: Cascade)
+
+    @@unique([heroId, role])
+    @@index([role])
+}
+
+model Card {
+    id              Int      @id @default(autoincrement())
+    heroId          Int
+    cardIndex       Int      @db.SmallInt // 1-19+ position in deck
+
+    name            String   @db.VarChar(100)
+    cardType        CardType
+    cardLevel       Int?     @db.SmallInt // I=1, II=2, III=3
+
+    // Card stats (nullable as not all cards have all stats)
+    initiativeValue Int?     @db.SmallInt
+    attackValue     Int?     @db.SmallInt
+    defenseValue    Int?     @db.SmallInt
+    movementValue   Int?     @db.SmallInt
+    rangeValue      Int?     @db.SmallInt
+
+    // Effect
+    effectText      String?  @db.Text
+    hasAftershock   Boolean  @default(false)
+
+    // Image reference
+    cardImage       String   @db.VarChar(255)
+
+    createdAt       DateTime @default(now())
+
+    hero            Hero     @relation(fields: [heroId], references: [id], onDelete: Cascade)
+
+    @@unique([heroId, cardIndex])
+    @@index([heroId])
+    @@index([cardType])
+    @@index([cardLevel])
+}
+
+model SpellbookCard {
+    id              Int      @id @default(autoincrement())
+    heroId          Int
+    spellLevel      Int      @db.SmallInt // 1,2,3,4(Ult)
+    cardIndex       Int      @db.SmallInt
+
+    name            String   @db.VarChar(100)
+    cardType        CardType
+
+    initiativeValue Int?     @db.SmallInt
+    attackValue     Int?     @db.SmallInt
+    defenseValue    Int?     @db.SmallInt
+    movementValue   Int?     @db.SmallInt
+    rangeValue      Int?     @db.SmallInt
+
+    effectText      String?  @db.Text
+
+    cardImage       String   @db.VarChar(255)
+    backImage       String?  @db.VarChar(255)
+
+    createdAt       DateTime @default(now())
+
+    hero            Hero     @relation(fields: [heroId], references: [id], onDelete: Cascade)
+
+    @@unique([heroId, spellLevel, cardIndex])
+    @@index([heroId])
+    @@index([spellLevel])
 }
