@@ -1,6 +1,6 @@
 import { randomBytes } from "crypto";
 
-import type { Hero, Class } from "~/generated/prisma";
+import type { Hero, Class } from "../../../generated/prisma/client";
 
 export interface Player {
   id: string;

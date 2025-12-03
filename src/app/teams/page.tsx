@@ -314,7 +314,7 @@ function TeamsPageContent() {
 
           <Button
             onClick={handleRandomize}
-            disabled={randomizeMutation.isPending || (draft && !draft.isComplete)}
+            disabled={randomizeMutation.isPending || (draft !== null && !draft.isComplete)}
             variant="game-secondary"
             size="xl"
             className="w-full"
