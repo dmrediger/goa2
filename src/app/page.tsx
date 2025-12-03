@@ -1,43 +1,44 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { Play } from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "~/components/ui/button";
+import { Spinner } from "~/components/ui/spinner";
 
 export default function Home() {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center">
-      {/* Background with subtle pattern overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-ice-500/10 via-transparent to-transparent" />
-
-      <div className="relative z-10 flex flex-col items-center justify-center gap-8 px-4 py-8">
-        {/* Game Logo/Image */}
-        <div className="relative w-full max-w-md">
-          <Image
-            src="/guards-of-atlantis-ii.jpg"
-            alt="Guards of Atlantis II"
-            width={800}
-            height={400}
-            priority
-            className="w-full rounded-sm border-2 border-ice-500/30 shadow-2xl shadow-ice-500/20"
-          />
+    <main className="relative h-dvh w-full overflow-hidden bg-game-slate-950">
+      {/* Loading spinner */}
+      {!imageLoaded && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center">
+          <Spinner className="size-12 text-ice-400" />
         </div>
+      )}
 
-        {/* Title Text */}
-        <h1 className="text-center font-bold tracking-wide text-parchment-100">
-          <span className="block text-sm uppercase text-ice-400">
-            Welcome to
-          </span>
-          <span className="block text-3xl uppercase sm:text-4xl">
-            Guards of Atlantis II
-          </span>
-          <span className="block text-sm uppercase text-parchment-200/70">
-            Game Setup Assistant
-          </span>
-        </h1>
+      {/* Full-screen background image */}
+      <Image
+        src="/home-background.webp"
+        alt="Guards of Atlantis II"
+        fill
+        priority
+        className={`object-cover object-center transition-opacity duration-300 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+        onLoad={() => setImageLoaded(true)}
+      />
 
-        {/* Play Button */}
-        <Button asChild variant="game" size="xl" className="mt-4">
-          <Link href="/setup">Play</Link>
+      {/* Play Button - positioned below the logo */}
+      <div
+        className={`absolute inset-x-0 bottom-[15%] z-10 flex justify-center sm:bottom-1/4 transition-opacity duration-300 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+      >
+        <Button asChild variant="game" size="2xl">
+          <Link href="/setup">
+            <Play className="fill-current" />
+            Play Now
+          </Link>
         </Button>
       </div>
     </main>

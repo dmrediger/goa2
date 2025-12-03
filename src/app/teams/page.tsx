@@ -8,6 +8,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { HeroCardModal } from "~/components/hero-pick/HeroCardModal";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Spinner } from "~/components/ui/spinner";
 import { api } from "~/trpc/react";
 
 const PLAYERS_STORAGE_KEY = "goa2-players";
@@ -151,10 +152,13 @@ function TeamsPageContent() {
     randomizeMutation.mutate({ players });
   };
 
-  if (!isLoaded) {
+  // Show spinner while loading or during initial auto-randomize
+  const isAutoRandomizing = searchParams.get("from") === "setup" && randomizeMutation.isPending;
+
+  if (!isLoaded || isAutoRandomizing) {
     return (
-      <main className="flex min-h-dvh flex-col items-center justify-center">
-        <div className="text-muted-foreground">Loading...</div>
+      <main className="flex min-h-dvh flex-col items-center justify-center bg-game-slate-950">
+        <Spinner className="size-12 text-ice-400" />
       </main>
     );
   }
@@ -351,8 +355,8 @@ export default function TeamsPage() {
   return (
     <Suspense
       fallback={
-        <main className="flex min-h-dvh flex-col items-center justify-center">
-          <div className="text-muted-foreground">Loading...</div>
+        <main className="flex min-h-dvh flex-col items-center justify-center bg-game-slate-950">
+          <Spinner className="size-12 text-ice-400" />
         </main>
       }
     >

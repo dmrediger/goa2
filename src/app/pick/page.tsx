@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import { HeroCarousel } from "~/components/hero-pick/HeroCarousel";
 import { Button } from "~/components/ui/button";
+import { Spinner } from "~/components/ui/spinner";
 import {
   Dialog,
   DialogContent,
@@ -105,6 +106,7 @@ export default function PickPage() {
   const [selectedHero, setSelectedHero] = useState<HeroOption | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showRestartDialog, setShowRestartDialog] = useState(false);
+  const [imagesLoadedForPick, setImagesLoadedForPick] = useState<number | null>(null);
 
   const initDraftMutation = api.heroPick.initializeDraft.useMutation({
     onSuccess: (data) => {
@@ -131,6 +133,15 @@ export default function PickPage() {
       initDraftMutation.mutate({ teams });
     }
   }, [isLoaded, teams, draft, initDraftMutation]);
+
+  const currentPickIndex = draft?.currentPickIndex ?? -1;
+
+  const handleImagesLoaded = () => {
+    setImagesLoadedForPick(currentPickIndex);
+  };
+
+  // Check if images are loaded for the current pick
+  const imagesLoaded = imagesLoadedForPick === currentPickIndex;
 
   const handleHeroSelect = (hero: HeroOption) => {
     setSelectedHero(hero);
@@ -184,8 +195,9 @@ export default function PickPage() {
 
   if (!isLoaded || initDraftMutation.isPending) {
     return (
-      <main className="flex min-h-dvh flex-col items-center justify-center">
-        <div className="text-muted-foreground">
+      <main className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-game-slate-950">
+        <Spinner className="size-12 text-ice-400" />
+        <div className="text-parchment-200/70">
           {initDraftMutation.isPending ? "Preparing hero draft..." : "Loading..."}
         </div>
       </main>
@@ -226,8 +238,9 @@ export default function PickPage() {
 
   if (!draft) {
     return (
-      <main className="flex min-h-dvh flex-col items-center justify-center">
-        <div className="text-muted-foreground">Initializing draft...</div>
+      <main className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-game-slate-950">
+        <Spinner className="size-12 text-ice-400" />
+        <div className="text-parchment-200/70">Initializing draft...</div>
       </main>
     );
   }
@@ -265,19 +278,8 @@ export default function PickPage() {
               </span>
             </Link>
           </Button>
-          <div className="flex items-center gap-4">
-            <div className="text-sm text-parchment-200/70">
-              Pick {draft.currentPickIndex + 1} of {draft.pickOrder.length}
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleRestartDraft}
-              className="gap-1 text-parchment-200/50 hover:text-parchment-100"
-              title="Restart draft with new heroes"
-            >
-              <RotateCcw className="h-4 w-4" />
-            </Button>
+          <div className="text-sm text-parchment-200/70">
+            Pick {draft.currentPickIndex + 1} of {draft.pickOrder.length}
           </div>
         </div>
 
@@ -292,11 +294,34 @@ export default function PickPage() {
         </div>
 
         {/* Hero Carousel */}
-        <div className="flex-1">
-          <HeroCarousel
-            heroes={currentPick.heroOptions}
-            onSelect={handleHeroSelect}
-          />
+        <div className="relative flex-1">
+          {!imagesLoaded && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+              <Spinner className="size-12 text-ice-400" />
+              <div className="text-parchment-200/70">Loading heroes...</div>
+            </div>
+          )}
+          <div className={imagesLoaded ? "" : "invisible"}>
+            <HeroCarousel
+              key={`pick-${draft.currentPickIndex}`}
+              heroes={currentPick.heroOptions}
+              onSelect={handleHeroSelect}
+              onImagesLoaded={handleImagesLoaded}
+            />
+          </div>
+        </div>
+
+        {/* Restart Draft Button */}
+        <div className="mt-6 flex justify-center pb-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleRestartDraft}
+            className="gap-2 text-parchment-200/50 hover:text-parchment-100"
+          >
+            <RotateCcw className="h-4 w-4" />
+            Restart draft
+          </Button>
         </div>
       </div>
 

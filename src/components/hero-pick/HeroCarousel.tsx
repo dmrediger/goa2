@@ -27,17 +27,45 @@ function getImageSrc(path: string): string {
 interface HeroCarouselProps {
   heroes: HeroOption[];
   onSelect: (hero: HeroOption) => void;
+  onImagesLoaded?: () => void;
 }
 
-export function HeroCarousel({ heroes, onSelect }: HeroCarouselProps) {
+export function HeroCarousel({ heroes, onSelect, onImagesLoaded }: HeroCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [animationPhase, setAnimationPhase] = useState<"idle" | "exit" | "enter">("idle");
   const [slideDirection, setSlideDirection] = useState<"left" | "right" | null>(null);
   const [displayIndex, setDisplayIndex] = useState(0);
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
+  const [allImagesReady, setAllImagesReady] = useState(false);
 
   const currentHero = heroes[displayIndex];
+
+  // Track when all images are loaded
+  const handleImageLoad = (index: number) => {
+    setLoadedImages((prev) => {
+      const next = new Set(prev);
+      next.add(index);
+      return next;
+    });
+  };
+
+  // Check if all images are loaded
+  useEffect(() => {
+    if (loadedImages.size === heroes.length && !allImagesReady) {
+      setAllImagesReady(true);
+      onImagesLoaded?.();
+    }
+  }, [loadedImages, heroes.length, allImagesReady, onImagesLoaded]);
+
+  // Reset state when heroes change
+  useEffect(() => {
+    setCurrentIndex(0);
+    setDisplayIndex(0);
+    setLoadedImages(new Set());
+    setAllImagesReady(false);
+  }, [heroes]);
 
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50;
@@ -150,21 +178,32 @@ export function HeroCarousel({ heroes, onSelect }: HeroCarouselProps) {
           {/* Full-width glow */}
           <div className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 h-48 bg-ice-500/20 blur-3xl" />
           <div className="-rotate-90 relative z-10">
-            <div
-              className={`transition-all duration-150 ease-out ${getAnimationClass()}`}
-              style={{
-                transformOrigin: slideDirection === "left" ? "bottom left" : "bottom right",
-              }}
-            >
-              <Image
-                src={getImageSrc(currentHero.heroCardImage)}
-                alt={currentHero.name}
-                width={280}
-                height={392}
-                priority
-                className="rounded-xl shadow-2xl shadow-black/50"
-              />
-            </div>
+            {/* Render all images but only show the current one */}
+            {heroes.map((hero, index) => (
+              <div
+                key={hero.id}
+                className={`${index === displayIndex ? "" : "absolute inset-0 invisible"} ${
+                  index === displayIndex
+                    ? `transition-all duration-150 ease-out ${getAnimationClass()}`
+                    : ""
+                }`}
+                style={
+                  index === displayIndex
+                    ? { transformOrigin: slideDirection === "left" ? "bottom left" : "bottom right" }
+                    : undefined
+                }
+              >
+                <Image
+                  src={getImageSrc(hero.heroCardImage)}
+                  alt={hero.name}
+                  width={280}
+                  height={392}
+                  priority
+                  className="rounded-xl shadow-2xl shadow-black/50"
+                  onLoad={() => handleImageLoad(index)}
+                />
+              </div>
+            ))}
           </div>
         </div>
       </div>

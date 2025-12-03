@@ -19,17 +19,18 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
-        game: "rounded-xl bg-amber-600 text-white hover:bg-amber-500 uppercase tracking-wider font-bold shadow-md shadow-amber-600/30",
+        game: "rounded-lg bg-gradient-to-b from-amber-500 to-amber-700 text-white hover:from-amber-400 hover:to-amber-600 uppercase tracking-wider font-bold",
         "game-secondary":
-          "rounded-xl bg-ice-500 text-white hover:bg-ice-400 uppercase tracking-wider font-bold shadow-md shadow-ice-500/30",
+          "rounded-lg bg-gradient-to-b from-ice-400 to-ice-600 text-white hover:from-ice-300 hover:to-ice-500 uppercase tracking-wider font-bold",
         "game-ghost":
-          "rounded-xl border-2 border-dashed border-ice-500/30 bg-transparent text-ice-400 hover:border-ice-500/50 hover:bg-ice-600/10 uppercase tracking-wider font-medium",
+          "rounded-lg border-2 border-dashed border-ice-500/30 bg-transparent text-ice-400 hover:border-ice-500/50 hover:bg-ice-600/10 uppercase tracking-wider font-medium",
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
+        default: "px-4 py-3 has-[>svg]:px-3",
         sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        xl: "h-12 rounded-md px-8 text-lg has-[>svg]:px-6",
+        xl: "h-12 rounded-lg px-8 text-lg has-[>svg]:px-6",
+        "2xl": "h-16 rounded-lg px-12 text-2xl has-[>svg]:px-8 gap-3 [&_svg:not([class*='size-'])]:size-7",
         icon: "size-9",
         "icon-sm": "size-8",
         "icon-lg": "size-10",
