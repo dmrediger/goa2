@@ -182,14 +182,15 @@ export default function PickPage() {
       isComplete,
     };
 
-    setDraft(updatedDraft);
     saveDraft(updatedDraft);
     setShowConfirmDialog(false);
     setSelectedHero(null);
 
-    // If draft is complete, go back to teams page
+    // If draft is complete, go back to teams page immediately
     if (isComplete) {
       router.push("/teams");
+    } else {
+      setDraft(updatedDraft);
     }
   };
 
@@ -245,9 +246,17 @@ export default function PickPage() {
     );
   }
 
-  if (draft.isComplete) {
-    router.push("/teams");
-    return null;
+  // Check if all players have selected heroes
+  const allPlayersHaveHeroes = draft.playerPicks.every((pick) => pick.selectedHero !== null);
+  if (allPlayersHaveHeroes) {
+    return (
+      <main className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-game-slate-950">
+        <h1 className="text-3xl font-bold uppercase tracking-wide text-parchment-100">
+          Draft Complete!
+        </h1>
+        <p className="text-xl text-amber-400">Good luck!</p>
+      </main>
+    );
   }
 
   const currentPick = draft.playerPicks[draft.currentPickIndex];

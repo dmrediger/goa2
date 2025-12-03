@@ -126,7 +126,7 @@
 /* Card swipe animations - using translateY because card is rotated -90deg */
 @keyframes slide-in-left {
   from {
-    transform: translateY(-100%) rotate(-8deg);
+    transform: translateY(-100%) rotate(8deg);
     opacity: 0;
   }
   to {

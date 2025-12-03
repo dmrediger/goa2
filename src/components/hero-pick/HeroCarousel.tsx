@@ -73,7 +73,7 @@ export function HeroCarousel({ heroes, onSelect, onImagesLoaded }: HeroCarouselP
   const animateToIndex = (newIndex: number) => {
     if (newIndex === currentIndex || animationPhase !== "idle") return;
 
-    const direction = newIndex > currentIndex ? "left" : "right";
+    const direction = newIndex > currentIndex ? "right" : "left";
     setSlideDirection(direction);
     setAnimationPhase("exit");
     setTimeout(() => {
@@ -148,18 +148,22 @@ export function HeroCarousel({ heroes, onSelect, onImagesLoaded }: HeroCarouselP
       return "translate-y-0 opacity-100 rotate-0";
     }
     if (animationPhase === "exit") {
-      // Card swipes off screen - both go up but with opposite rotation
-      if (slideDirection === "left") {
-        return "-translate-y-full opacity-0 rotate-12";
+      // Card swipes off screen with rotation
+      if (slideDirection === "right") {
+        // Going right: card exits to the left
+        return "-translate-y-full opacity-0 rotate-8";
       }
-      return "-translate-y-full opacity-0 -rotate-12";
+      // Going left: card exits to the right
+      return "translate-y-full opacity-0 rotate-8";
     }
     if (animationPhase === "enter") {
-      // Card enters from below
-      if (slideDirection === "left") {
-        return "animate-slide-in-left";
+      // Card enters with arc
+      if (slideDirection === "right") {
+        // Going right: new card arcs up from bottom right
+        return "animate-slide-in-right";
       }
-      return "animate-slide-in-right";
+      // Going left: new card arcs up from bottom left (mirrored)
+      return "animate-slide-in-left";
     }
     return "";
   };

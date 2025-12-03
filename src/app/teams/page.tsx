@@ -197,6 +197,25 @@ function TeamsPageContent() {
           </Button>
         </div>
 
+        {/* Congratulations Banner */}
+        {draft?.isComplete && (
+          <div className="mx-auto mb-6 w-full max-w-md">
+            <div className="relative rounded-lg bg-gradient-to-b from-amber-200 to-amber-300 px-6 py-4 text-center shadow-lg">
+              {/* Parchment texture overlay */}
+              <div className="absolute inset-0 rounded-lg bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjZmZmIj48L3JlY3Q+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNjY2MiPjwvcmVjdD4KPC9zdmc+')] opacity-20" />
+              {/* Border accents */}
+              <div className="absolute inset-x-4 top-2 h-px bg-gradient-to-r from-transparent via-amber-700/30 to-transparent" />
+              <div className="absolute inset-x-4 bottom-2 h-px bg-gradient-to-r from-transparent via-amber-700/30 to-transparent" />
+              <div className="relative">
+                <p className="text-xs font-semibold uppercase tracking-widest text-amber-800/70">Draft Complete</p>
+                <h2 className="mt-1 font-[family-name:var(--font-cinzel-decorative)] text-xl font-bold text-amber-900 sm:text-2xl">
+                  Let the Battle Begin!
+                </h2>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Title */}
         <h1 className="mb-6 text-center text-2xl font-bold uppercase tracking-wide text-parchment-100">
           Teams
