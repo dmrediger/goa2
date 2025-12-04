@@ -172,7 +172,7 @@ export function HeroCarousel({ heroes, onSelect, onImagesLoaded }: HeroCarouselP
     <div className="flex flex-col items-center">
       {/* Main Card Display - Landscape */}
       <div
-        className="w-full"
+        className="relative w-full"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -210,43 +210,45 @@ export function HeroCarousel({ heroes, onSelect, onImagesLoaded }: HeroCarouselP
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Navigation Arrows and Dots - Outside swipe area */}
-      <div className="relative z-20 mt-4 flex items-center justify-center gap-4">
-        <button
-          type="button"
-          onClick={goToPrev}
-          disabled={currentIndex === 0 || animationPhase !== "idle"}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-game-slate-800/50 text-parchment-100 hover:bg-game-slate-700 disabled:opacity-30"
-        >
-          <ChevronLeft className="h-6 w-6" />
-        </button>
+        {/* Navigation Arrows and Dots - Overlaid on card */}
+        <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-between px-2">
+          <button
+            type="button"
+            onClick={goToPrev}
+            disabled={currentIndex === 0 || animationPhase !== "idle"}
+            className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-game-slate-900/70 text-parchment-100 hover:bg-game-slate-800 disabled:opacity-30"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
 
-        {/* Card Position Indicator */}
-        <div className="flex gap-3">
-          {heroes.map((_, index) => (
-            <button
-              type="button"
-              key={index}
-              onClick={() => animateToIndex(index)}
-              className={`h-3 rounded-full transition-all duration-300 ${
-                index === currentIndex
-                  ? "w-8 bg-amber-500"
-                  : "w-3 bg-parchment-200/30 hover:bg-parchment-200/50"
-              }`}
-            />
-          ))}
+          <button
+            type="button"
+            onClick={goToNext}
+            disabled={currentIndex === heroes.length - 1 || animationPhase !== "idle"}
+            className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-game-slate-900/70 text-parchment-100 hover:bg-game-slate-800 disabled:opacity-30"
+          >
+            <ChevronRight className="h-6 w-6" />
+          </button>
         </div>
 
-        <button
-          type="button"
-          onClick={goToNext}
-          disabled={currentIndex === heroes.length - 1 || animationPhase !== "idle"}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-game-slate-800/50 text-parchment-100 hover:bg-game-slate-700 disabled:opacity-30"
-        >
-          <ChevronRight className="h-6 w-6" />
-        </button>
+        {/* Card Position Indicator - Overlaid at bottom of card */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-4 z-20 flex justify-center">
+          <div className="pointer-events-auto flex gap-3">
+            {heroes.map((_, index) => (
+              <button
+                type="button"
+                key={index}
+                onClick={() => animateToIndex(index)}
+                className={`h-3 rounded-full transition-all duration-300 ${
+                  index === currentIndex
+                    ? "w-8 bg-amber-500"
+                    : "w-3 bg-parchment-200/50 hover:bg-parchment-200/70"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Hero Info */}
